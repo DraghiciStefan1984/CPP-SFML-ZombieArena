@@ -11,7 +11,7 @@ Player::Player()
 	mSprite.setOrigin(25, 25);
 }
 
-void Player::spawn(IntRect arena, Vector2f resolution, int tileSize)
+void Player::Spawn(IntRect arena, Vector2f resolution, int tileSize)
 {
 	mPosition.x = arena.width / 2;
 	mPosition.y = arena.height / 2;
@@ -24,9 +24,9 @@ void Player::spawn(IntRect arena, Vector2f resolution, int tileSize)
 	mResolution.y = resolution.y;
 }
 
-Time Player::getLastHitTime() { return mLastHit; }
+Time Player::GetLastHitTime() { return mLastHit; }
 
-bool Player::hit(Time timeHit)
+bool Player::Hit(Time timeHit)
 {
 	if (timeHit.asMilliseconds() - mLastHit.asMilliseconds() > 200)// 2 tenths of second
 	{
@@ -40,33 +40,33 @@ bool Player::hit(Time timeHit)
 	}
 }
 
-FloatRect Player::getPosition() { return mSprite.getGlobalBounds(); }
+FloatRect Player::GetPosition() { return mSprite.getGlobalBounds(); }
 
-Vector2f Player::getCenter() { return mPosition; }
+Vector2f Player::GetCenter() { return mPosition; }
 
-float Player::getRotation() { return mSprite.getRotation(); }
+float Player::GetRotation() { return mSprite.getRotation(); }
 
-Sprite Player::getSprite() { return mSprite; }
+Sprite Player::GetSprite() { return mSprite; }
 
-int Player::getHealth() { return mHealth; }
+int Player::GetHealth() { return mHealth; }
 
-void Player::moveLeft() { mLeftPressed = true; }
+void Player::MoveLeft() { mLeftPressed = true; }
 
-void Player::moveRight() { mRightPressed = true; }
+void Player::MoveRight() { mRightPressed = true; }
 
-void Player::moveUp() { mUpPressed = true; }
+void Player::MoveUp() { mUpPressed = true; }
 
-void Player::moveDown() { mDownPressed = true; }
+void Player::MoveDown() { mDownPressed = true; }
 
-void Player::stopLeft() { mLeftPressed = false; }
+void Player::StopLeft() { mLeftPressed = false; }
 
-void Player::stopRight() { mRightPressed = false; }
+void Player::StopRight() { mRightPressed = false; }
 
-void Player::stopUp() { mUpPressed = false; }
+void Player::StopUp() { mUpPressed = false; }
 
-void Player::stopDown() { mDownPressed = false; }
+void Player::StopDown() { mDownPressed = false; }
 
-void Player::update(float elapsedTime, Vector2i mousePosition)
+void Player::Update(float elapsedTime, Vector2i mousePosition)
 {
 	if (mUpPressed) { mPosition.y -= mSpeed * elapsedTime; }
 	if (mDownPressed) { mPosition.y += mSpeed * elapsedTime; }
@@ -84,11 +84,11 @@ void Player::update(float elapsedTime, Vector2i mousePosition)
 	mSprite.setRotation(angle);
 }
 
-void Player::upgradeSpeed() { mSpeed += (START_SPEED * .2); }
+void Player::UpgradeSpeed() { mSpeed += (START_SPEED * .2); }
 
-void Player::upgradeHealth() { mMaxHealth += (START_HEALTH * .2); }
+void Player::UpgradeHealth() { mMaxHealth += (START_HEALTH * .2); }
 
-void Player::increaseHealthLevel(int amount)
+void Player::IncreaseHealthLevel(int amount)
 {
 	mHealth += amount;
 	if (mHealth > mMaxHealth) { mHealth = mMaxHealth; }
