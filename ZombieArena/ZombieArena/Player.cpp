@@ -1,13 +1,13 @@
 #include "pch.h"
 #include "Player.h"
+#include "TextureHolder.h"
 
 Player::Player()
 {
 	mSpeed = START_SPEED;
 	mHealth = START_HEALTH;
 	mMaxHealth = START_HEALTH;
-	mTexture.loadFromFile("graphics/player.png");
-	mSprite.setTexture(mTexture);
+	mSprite = Sprite(TextureHolder::GetTexture("graphics/player.png"));
 	mSprite.setOrigin(25, 25);
 }
 
