@@ -3,64 +3,44 @@
 
 using namespace sf;
 
-Bullet::Bullet()
-{
-	mBulletShape.setSize(Vector2f(2, 2));
-}
+Bullet::Bullet() { m_BulletShape.setSize(sf::Vector2f(2, 2)); }
 
-Bullet::~Bullet()
+void Bullet::shoot(float startX, float startY, float targetX, float targetY)
 {
-}
-
-void Bullet::Stop()
-{
-	mInFlight = false;
-}
-
-bool Bullet::IsInFlight()
-{
-	return mInFlight;
-}
-
-void Bullet::Shoot(float startX, float startY, float targetX, float targetY)
-{
-	mInFlight = true;
-	mPosition.x = startX;
-	mPosition.y = startY;
+	m_InFlight = true;
+	m_Position.x = startX;
+	m_Position.y = startY;
 	float gradient = (startX - targetX) / (startY - targetY);
-
 	if (gradient < 0) gradient *= -1;
-
-	float ratioXY = mBulletSpeed / (1 + gradient);
-	mBulletDistanceX = ratioXY * gradient;
-	mBulletDistanceY = ratioXY;
-	
-	if (targetX < startX) mBulletDistanceX *= -1;
-	if (targetY < startY) mBulletDistanceY *= -1;
-
+	float ratioXY = m_BulletSpeed / (1 + gradient);
+	m_BulletDistanceY = ratioXY;
+	m_BulletDistanceX = ratioXY * gradient;
+	if (targetX < startX) m_BulletDistanceX *= -1;
+	if (targetY < startY) m_BulletDistanceY *= -1;
+	m_XTarget = targetX;
+	m_YTarget = targetY;
 	float range = 1000;
-	mMinX = startX - range;
-	mMaxX = startX + range;
-	mMinY = startY - range;
-	mMaxY = startY + range;
-	mBulletShape.setPosition(mPosition);
+	m_MinX = startX - range;
+	m_MaxX = startX + range;
+	m_MinY = startY - range;
+	m_MaxY = startY + range;
+	m_BulletShape.setPosition(m_Position);
 }
 
-FloatRect Bullet::GetPosition()
-{
-	return mBulletShape.getGlobalBounds();
-}
+void Bullet::stop() { m_InFlight = false; }
 
-RectangleShape Bullet::GetShape()
-{
-	return mBulletShape;
-}
+bool Bullet::isInFlight() {	return m_InFlight; }
 
-void Bullet::Update(float elapsedTime)
-{
-	mPosition.x += mBulletDistanceX * elapsedTime;
-	mPosition.y += mBulletDistanceY * elapsedTime;
-	mBulletShape.setPosition(mPosition);
+FloatRect Bullet::getPosition() { return m_BulletShape.getGlobalBounds(); }
 
-	if (mPosition.x<mMinX || mPosition.x>mMaxX || mPosition.y<mMinY || mPosition.y>mMaxY) mInFlight = false;
+RectangleShape Bullet::getShape() {	return m_BulletShape; }
+
+void Bullet::update(float elapsedTime)
+{
+	m_Position.x += m_BulletDistanceX * elapsedTime;
+	m_Position.y += m_BulletDistanceY * elapsedTime;
+
+	m_BulletShape.setPosition(m_Position);
+
+	if (m_Position.x < m_MinX || m_Position.x > m_MaxX || m_Position.y < m_MinY || m_Position.y > m_MaxY) m_InFlight = false;
 }
