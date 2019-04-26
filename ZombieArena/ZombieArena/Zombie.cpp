@@ -27,7 +27,7 @@ bool Zombie::IsAlive()
 	return mAlive;
 }
 
-void Zombie::Sapwn(float startX, float startY, int type, int seed)
+void Zombie::Spawn(float startX, float startY, int type, int seed)
 {
 	switch (type)
 	{

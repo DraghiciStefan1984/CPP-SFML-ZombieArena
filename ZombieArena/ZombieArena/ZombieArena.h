@@ -5,4 +5,4 @@
 using namespace sf;
 
 int CreateBackground(VertexArray& rVA, IntRect arena);
-Zombie* createHorde(int numSombies, IntRect arena);
+Zombie* CreateHorde(int numSombies, IntRect arena);
