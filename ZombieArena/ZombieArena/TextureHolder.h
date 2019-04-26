@@ -8,12 +8,10 @@ using namespace sf;
 class TextureHolder
 {
 private:
-	static TextureHolder* mInstance;
-	map<string, Texture> mTextures;
+	std::map<std::string, sf::Texture> m_Textures;
+	static TextureHolder* m_s_Instance;
 
 public:
 	TextureHolder();
-	~TextureHolder();
-	static Texture& GetTexture(string const filename);
+	static sf::Texture& GetTexture(std::string const& filename);
 };
-

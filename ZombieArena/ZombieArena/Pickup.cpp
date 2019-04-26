@@ -4,89 +4,76 @@
 
 Pickup::Pickup(int type)
 {
-	mType = type;
+	m_Type = type;
 
-	if (mType == 1)
+	if (m_Type == 1)
 	{
-		mSprite = Sprite(TextureHolder::GetTexture("graphics/health_pickup.png"));
-		mValue = HEALTH_START_VALUE;
+		m_Sprite = Sprite(TextureHolder::GetTexture("graphics/health_pickup.png"));
+		m_Value = HEALTH_START_VALUE;
 	}
 	else
 	{
-		mSprite = Sprite(TextureHolder::GetTexture("graphics/ammo_pickup.png"));
-		mValue = AMMO_START_VALUE;
+		m_Sprite = Sprite(TextureHolder::GetTexture("graphics/ammo_pickup.png"));
+		m_Value = AMMO_START_VALUE;
 	}
-
-	mSprite.setOrigin(25, 25);
-	mSecondsToLive = START_SECONDS_TO_LIVE;
-	mSecondsToWait = START_WAIT_TIME;
+	m_Sprite.setOrigin(25, 25);
+	m_SecondsToLive = START_SECONDS_TO_LIVE;
+	m_SecondsToWait = START_WAIT_TIME;
 }
 
-Pickup::~Pickup()
+void Pickup::setArena(IntRect arena)
 {
+	m_Arena.left = arena.left + 50;
+	m_Arena.width = arena.width - 50;
+	m_Arena.top = arena.top + 50;
+	m_Arena.height = arena.height - 50;
+	spawn();
 }
 
-void Pickup::SetArena(IntRect arena)
+void Pickup::spawn()
 {
-	mArena.left = arena.left + 50;
-	mArena.width = arena.width - 50;
-	mArena.top = arena.top + 50;
-	mArena.height = arena.height - 50;
-	Spawn();
+	srand((int)time(0) / m_Type);
+	int x = (rand() % m_Arena.width);
+	srand((int)time(0) * m_Type);
+	int y = (rand() % m_Arena.height);
+
+	m_SecondsSinceSpawn = 0;
+	m_Spawned = true;
+	m_Sprite.setPosition(x, y);
 }
 
-void Pickup::Spawn()
+FloatRect Pickup::getPosition() { return m_Sprite.getGlobalBounds(); }
+
+Sprite Pickup::getSprite() { return m_Sprite; }
+
+bool Pickup::isSpawned() { return m_Spawned; }
+
+int Pickup::gotIt()
 {
-	srand((int)time(0) / mType);
-	int x = (rand() % mArena.width);
-	srand((int)time(0) * mType);
-	int y = (rand() % mArena.height);
-	mSecondsSinceSapwn = 0;
-	mSpawned = true;
-	mSprite.setPosition(x, y);
+	m_Spawned = false;
+	m_SecondsSinceDeSpawn = 0;
+	return m_Value;
 }
 
-FloatRect Pickup::GetPosition()
+void Pickup::update(float elapsedTime)
 {
-	return mSprite.getGlobalBounds();
-}
+	if (m_Spawned) m_SecondsSinceSpawn += elapsedTime;
+	else m_SecondsSinceDeSpawn += elapsedTime;
 
-Sprite Pickup::GetSprite()
-{
-	return mSprite;
-}
-
-void Pickup::Update(float elapsedTime)
-{
-	if (mSpawned) mSecondsSinceSapwn += elapsedTime;
-	else mSecondsSinceDeSapwn += elapsedTime;
-
-	if (mSecondsSinceSapwn > mSecondsToLive && mSpawned)
+	if (m_SecondsSinceSpawn > m_SecondsToLive && m_Spawned)
 	{
-		mSpawned = false;
-		mSecondsSinceDeSapwn = 0;
+		m_Spawned = false;
+		m_SecondsSinceDeSpawn = 0;
 	}
 
-	if (mSecondsSinceDeSapwn > mSecondsToWait && !mSpawned) Spawn();
+	if (m_SecondsSinceDeSpawn > m_SecondsToWait && !m_Spawned) spawn();
 }
 
-bool Pickup::IsSapwned()
+void Pickup::upgrade()
 {
-	return mSpawned;
-}
+	if (m_Type == 1) m_Value += (HEALTH_START_VALUE * .5);
+	else m_Value += (AMMO_START_VALUE * .5);
 
-int Pickup::GotIt()
-{
-	mSpawned = false;
-	mSecondsSinceDeSapwn = 0;
-	return mValue;
-}
-
-void Pickup::Upgrade()
-{
-	if (mType == 1) mValue += (HEALTH_START_VALUE * .5);
-	else mValue += (AMMO_START_VALUE * .5);
-
-	mSecondsToLive += (START_SECONDS_TO_LIVE / 10);
-	mSecondsToLive -= (START_WAIT_TIME / 10);
+	m_SecondsToLive += (START_SECONDS_TO_LIVE / 10);
+	m_SecondsToWait -= (START_WAIT_TIME / 10);
 }

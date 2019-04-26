@@ -2,30 +2,24 @@
 #include "TextureHolder.h"
 #include <assert.h>
 
-TextureHolder* TextureHolder::mInstance = nullptr;
+using namespace sf;
+
+TextureHolder* TextureHolder::m_s_Instance = nullptr;
 
 TextureHolder::TextureHolder()
 {
-	assert(mInstance == nullptr);
-	mInstance = this;
+	assert(m_s_Instance == nullptr);
+	m_s_Instance = this;
 }
 
-TextureHolder::~TextureHolder()
+Texture& TextureHolder::GetTexture(std::string const& filename)
 {
-}
-
-Texture & TextureHolder::GetTexture(string const filename)
-{
-	auto& textures = mInstance->mTextures;
-	auto keyValuePair = textures.find(filename);
-
-	if (keyValuePair != textures.end())
-	{
-		return keyValuePair->second;
-	}
+	auto& m = m_s_Instance->m_Textures;
+	auto keyValuePair = m.find(filename);
+	if (keyValuePair != m.end()) return keyValuePair->second;
 	else
 	{
-		auto& texture = textures[filename];
+		auto& texture = m[filename];
 		texture.loadFromFile(filename);
 		return texture;
 	}

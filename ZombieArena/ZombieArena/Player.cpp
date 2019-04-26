@@ -4,34 +4,42 @@
 
 Player::Player()
 {
-	mSpeed = START_SPEED;
-	mHealth = START_HEALTH;
-	mMaxHealth = START_HEALTH;
-	mSprite = Sprite(TextureHolder::GetTexture("graphics/player.png"));
-	mSprite.setOrigin(25, 25);
+	m_Speed = START_SPEED;
+	m_Health = START_HEALTH;
+	m_MaxHealth = START_HEALTH;
+
+	m_Sprite = Sprite(TextureHolder::GetTexture("graphics/player.png"));
+	m_Sprite.setOrigin(25, 25);
 }
 
-void Player::Spawn(IntRect arena, Vector2f resolution, int tileSize)
+void Player::resetPlayerStats()
 {
-	mPosition.x = arena.width / 2;
-	mPosition.y = arena.height / 2;
-	mArena.left = arena.left;
-	mArena.width = arena.width;
-	mArena.top = arena.top;
-	mArena.height = arena.height;
-	mTileSize = tileSize;
-	mResolution.x = resolution.x;
-	mResolution.y = resolution.y;
+	m_Speed = START_SPEED;
+	m_Health = START_HEALTH;
+	m_MaxHealth = START_HEALTH;
 }
 
-Time Player::GetLastHitTime() { return mLastHit; }
-
-bool Player::Hit(Time timeHit)
+void Player::spawn(IntRect arena, Vector2f resolution, int tileSize)
 {
-	if (timeHit.asMilliseconds() - mLastHit.asMilliseconds() > 200)// 2 tenths of second
+	m_Position.x = arena.width / 2;
+	m_Position.y = arena.height / 2;
+	m_Arena.left = arena.left;
+	m_Arena.width = arena.width;
+	m_Arena.top = arena.top;
+	m_Arena.height = arena.height;
+	m_TileSize = tileSize;
+	m_Resolution.x = resolution.x;
+	m_Resolution.y = resolution.y;
+}
+
+Time Player::getLastHitTime() { return m_LastHit; }
+
+bool Player::hit(Time timeHit)
+{
+	if (timeHit.asMilliseconds() - m_LastHit.asMilliseconds() > 200)
 	{
-		mLastHit = timeHit;
-		mHealth -= 10;
+		m_LastHit = timeHit;
+		m_Health -= 10;
 		return true;
 	}
 	else
@@ -40,56 +48,54 @@ bool Player::Hit(Time timeHit)
 	}
 }
 
-FloatRect Player::GetPosition() { return mSprite.getGlobalBounds(); }
+FloatRect Player::getPosition() { return m_Sprite.getGlobalBounds(); }
 
-Vector2f Player::GetCenter() { return mPosition; }
+Vector2f Player::getCenter() { return m_Position; }
 
-float Player::GetRotation() { return mSprite.getRotation(); }
+float Player::getRotation() { return m_Sprite.getRotation(); }
 
-Sprite Player::GetSprite() { return mSprite; }
+Sprite Player::getSprite() { return m_Sprite; }
 
-int Player::GetHealth() { return mHealth; }
+int Player::getHealth() { return m_Health; }
 
-void Player::MoveLeft() { mLeftPressed = true; }
+void Player::moveLeft() { m_LeftPressed = true; }
 
-void Player::MoveRight() { mRightPressed = true; }
+void Player::moveRight() { m_RightPressed = true; }
 
-void Player::MoveUp() { mUpPressed = true; }
+void Player::moveUp() { m_UpPressed = true; }
 
-void Player::MoveDown() { mDownPressed = true; }
+void Player::moveDown() { m_DownPressed = true; }
 
-void Player::StopLeft() { mLeftPressed = false; }
+void Player::stopLeft() { m_LeftPressed = false; }
 
-void Player::StopRight() { mRightPressed = false; }
+void Player::stopRight() { m_RightPressed = false; }
 
-void Player::StopUp() { mUpPressed = false; }
+void Player::stopUp() { m_UpPressed = false; }
 
-void Player::StopDown() { mDownPressed = false; }
+void Player::stopDown() { m_DownPressed = false; }
 
-void Player::Update(float elapsedTime, Vector2i mousePosition)
+void Player::update(float elapsedTime, Vector2i mousePosition)
 {
-	if (mUpPressed) { mPosition.y -= mSpeed * elapsedTime; }
-	if (mDownPressed) { mPosition.y += mSpeed * elapsedTime; }
-	if (mRightPressed) { mPosition.x += mSpeed * elapsedTime; }
-	if (mLeftPressed) { mPosition.x -= mSpeed * elapsedTime; }
+	if (m_UpPressed) m_Position.y -= m_Speed * elapsedTime;
+	if (m_DownPressed) m_Position.y += m_Speed * elapsedTime;
+	if (m_RightPressed) m_Position.x += m_Speed * elapsedTime;
+	if (m_LeftPressed) m_Position.x -= m_Speed * elapsedTime;
+	m_Sprite.setPosition(m_Position);
+	if (m_Position.x > m_Arena.width - m_TileSize) m_Position.x = m_Arena.width - m_TileSize;
+	if (m_Position.x < m_Arena.left + m_TileSize) m_Position.x = m_Arena.left + m_TileSize;
+	if (m_Position.y > m_Arena.height - m_TileSize) m_Position.y = m_Arena.height - m_TileSize;
+	if (m_Position.y < m_Arena.top + m_TileSize) m_Position.y = m_Arena.top + m_TileSize;
 
-	mSprite.setPosition(mPosition);
-
-	if (mPosition.x > mArena.width - mTileSize) { mPosition.x = mArena.width - mTileSize; }
-	if (mPosition.x < mArena.left + mTileSize) { mPosition.x = mArena.left + mTileSize; }
-	if (mPosition.y > mArena.height - mTileSize) { mPosition.y = mArena.height - mTileSize; }
-	if (mPosition.y < mArena.top + mTileSize) { mPosition.y = mArena.top + mTileSize; }
-
-	float angle = (atan2(mousePosition.y - mResolution.y / 2, mousePosition.x - mResolution.x / 2) * 180) / 3.141;
-	mSprite.setRotation(angle);
+	float angle = (atan2(mousePosition.y - m_Resolution.y / 2, mousePosition.x - m_Resolution.x / 2)* 180) / 3.141;
+	m_Sprite.setRotation(angle);
 }
 
-void Player::UpgradeSpeed() { mSpeed += (START_SPEED * .2); }
+void Player::upgradeSpeed() { m_Speed += (START_SPEED * .2); }
 
-void Player::UpgradeHealth() { mMaxHealth += (START_HEALTH * .2); }
+void Player::upgradeHealth() { m_MaxHealth += (START_HEALTH * .2); }
 
-void Player::IncreaseHealthLevel(int amount)
+void Player::increaseHealthLevel(int amount)
 {
-	mHealth += amount;
-	if (mHealth > mMaxHealth) { mHealth = mMaxHealth; }
+	m_Health += amount;
+	if (m_Health > m_MaxHealth) m_Health = m_MaxHealth;
 }

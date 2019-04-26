@@ -29,18 +29,16 @@ void Bullet::shoot(float startX, float startY, float targetX, float targetY)
 
 void Bullet::stop() { m_InFlight = false; }
 
-bool Bullet::isInFlight() {	return m_InFlight; }
+bool Bullet::isInFlight() { return m_InFlight; }
 
 FloatRect Bullet::getPosition() { return m_BulletShape.getGlobalBounds(); }
 
-RectangleShape Bullet::getShape() {	return m_BulletShape; }
+RectangleShape Bullet::getShape() { return m_BulletShape; }
 
 void Bullet::update(float elapsedTime)
 {
 	m_Position.x += m_BulletDistanceX * elapsedTime;
 	m_Position.y += m_BulletDistanceY * elapsedTime;
-
 	m_BulletShape.setPosition(m_Position);
-
 	if (m_Position.x < m_MinX || m_Position.x > m_MaxX || m_Position.y < m_MinY || m_Position.y > m_MaxY) m_InFlight = false;
 }
